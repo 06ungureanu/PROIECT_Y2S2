@@ -6,6 +6,8 @@
 # function printArrayNonl(array)
 # function checkFile(fpath)
 # function checkDirectory(fpath)
+# function printIfVerbose(verbose_flag, msg_type, msg) 
+# function checkIfGoodZip(zip_fpath)
 
 function printErrorMsg {    
     # check if invalid func call
@@ -45,7 +47,29 @@ function printArrayNonl {
         echo -n "$item "
     done
 }
+function printIfVerbose {
+    # check if invalid func call 
+    if [[ "$#" -ne 3 ]]; then 
+        return 
+    fi 
 
+    # check if verbose_flag
+    if [[ "$1" -eq 0 ]]; then 
+        return 
+    fi 
+
+    # check msg type 
+    if [[ "$2" != "info" && "$2" != "warning" && "$2" != "info" ]]; then 
+        return 
+    fi 
+
+    # check if empty msg 
+    if [[ -z "$3" ]]; then 
+        return 
+    fi 
+
+    printErrorMsg "$2" "$3"
+}
 function checkFile {
     # check if invalid func call 
     if [[ "$#" -ne 1 || -z "$1" ]]; then 
@@ -84,5 +108,22 @@ function checkNextMustArg {
         exit 1
     fi 
 }
+function checkIfGoodZip {
+    # Check if invalid func call 
+    if [[ "$#" -ne 1 ]]; then 
+        return 1 
+    fi 
 
+    if [[ ! -f "$1" ]]; then 
+        return 1 
+    fi 
 
+    local file_type
+    file_type=$(file -b --mime-type "$1") 
+    
+    if [[ "$file_type" != "application/zip" ]]; then 
+        return 1 
+    fi 
+
+    return 0                # 0 = good 
+}
