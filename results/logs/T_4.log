@@ -1,0 +1,7 @@
+[[0;32mInfo[0m] [2026-07-19] results/backups/base.zip unziped in 
+[[0;32mInfo[0m] [2026-07-19] Process started for results/data/dir1/new.txt
+[[0;32mInfo[0m] [2026-07-19] Metadata from /home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir1/new.txt dumped in /tmp/backup_sys_EEyVdT/.diff_backup.METADATA_BAK_2026-07-19.txt
+[[0;32mInfo[0m] [2026-07-19] Process started for results/data/dir1/file1.txt
+[[0;32mInfo[0m] [2026-07-19] Metadata from /home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir1/file1.txt dumped in /tmp/backup_sys_EEyVdT/.diff_backup.METADATA_BAK_2026-07-19.txt
+[[0;32mInfo[0m] [2026-07-19] Backup succefuly dumped to results/backups/diff_backup.zip
+[[0;32mInfo[0m] [2026-07-19] backup created from existing backup

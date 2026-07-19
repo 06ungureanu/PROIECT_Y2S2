@@ -7,7 +7,7 @@ set -euo pipefail
 
 # e = errexit (stop exection at first error) 
 # u = nounset (no unitialized vars allowed )
-# o pipefall = return error if one error happens
+# o pipefall = return error if one pipe error occur
 
 # Config vars
 CONF_FILE=""                 
@@ -64,7 +64,7 @@ function  cleanup() {
     fi 
 }
 
-# If one of this things cleanup
+# If one of this cleanup
 trap cleanup EXIT ERR INT TERM
 
 function checkAndPrintArguments() {

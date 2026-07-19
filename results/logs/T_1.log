@@ -1,0 +1,4 @@
+[[0;32mInfo[0m] [2026-07-19] backup started with directory flag
+[[0;32mInfo[0m] [2026-07-19] Process started for results/data/dir1/file1.txt
+[[0;32mInfo[0m] [2026-07-19] Metadata from /home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir1/file1.txt dumped in /tmp/backup_sys_3yhF7E/.simple_backup.METADATA_BAK_2026-07-19.txt
+[[0;32mInfo[0m] [2026-07-19] Backup succefuly dumped to results/backups/simple_backup.zip
