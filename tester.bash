@@ -7,6 +7,8 @@ CONFIG_DIR="$TEST_DIR/config"
 LOG_DIR="$TEST_DIR/logs"
 BACKUP_DIR="$TEST_DIR/backups"
 
+export BKP_PASS="pass"
+
 # clean last test
 rm -rf "$TEST_DIR"
 mkdir -p "$SOURCE_DIR/dir1" "$SOURCE_DIR/dir2" "$CONFIG_DIR" "$LOG_DIR" "$BACKUP_DIR"
@@ -40,7 +42,7 @@ function run_test() {
 run_test "Normal backup" "T_1" "./bin/main.bash -d $SOURCE_DIR/dir1 -o $BACKUP_DIR/simple_backup"
 
 # T_2 : Encrypted backup
-run_test "Encrypted backup" "T_2" "./bin/main.bash -d $SOURCE_DIR/dir2 -o $BACKUP_DIR/enc_backup -e pass"
+run_test "Encrypted backup" "T_2" "./bin/main.bash -d $SOURCE_DIR/dir2 -o $BACKUP_DIR/enc_backup" -e
 
 # T_3 : Backup from config file
 run_test "Backup from config file" "T_3" "./bin/main.bash -f $CONFIG_DIR/backup_list.txt -o $BACKUP_DIR/conf_backup"
@@ -53,5 +55,5 @@ echo "New Data" > "$SOURCE_DIR/dir1/new.txt"
 run_test "Backup existing zip" "T_4" "./bin/main.bash -d $SOURCE_DIR/dir1 -o $BACKUP_DIR/diff_backup -b $BACKUP_DIR/base.zip"
 
 # T_5 : Decrypt restore
-run_test "Resotre Backup" "T_5" "./bin/main.bash -dec pass -b $BACKUP_DIR/enc_backup.zip"
+run_test "Resotre Backup" "T_5" "./bin/main.bash -dec -b $BACKUP_DIR/enc_backup.zip"
 mv RESTORED* "$TEST_DIR" 

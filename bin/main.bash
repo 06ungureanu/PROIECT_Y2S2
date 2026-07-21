@@ -14,8 +14,6 @@ CONF_FILE=""
 BACKUP_FILE=""
 OUTPUT_FILE=""
 LOG_FILE=""
-ENC_PASS=""
-DEC_PASS=""
 
 # Main vars 
 declare -a TARGET_DIRS      
@@ -30,7 +28,6 @@ VERBOSE_ARG_FLAG=0
 DEC_ARG_FLAG=0 
 
 TEMP_BACKUP_DIR=""
-TMP_ZIP_DIR=""
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
@@ -48,8 +45,8 @@ function printHelpMenu() {
     echo "      -f / --file      [value]    [Provide a file with directories to back up]"
     echo "      -b / --backup    [value]    [Provide an existing backup to refer to]"
     echo "      -d / --directory [value]    [Provide one or more directories to back up]"
-    echo "      -e / --encrypt   [value]    [Provide encryption key]"
-    echo "      -dec/ --decrypt  [value]    [Provide decryption key]"
+    echo "      -e / --encrypt   [value]    [Requies BKP_PASS environment variable to be set]"
+    echo "      -dec/ --decrypt  [value]    [Requies BKP_PASS environment variable to be set]"
     echo "      -o / --output    [value]    [Output file name]"
     echo "      -v / --verbose   [no args]  [Enable verbose mode]"
     echo "      -h / --help      [no args]  [Show this help menu]"
@@ -58,9 +55,6 @@ function printHelpMenu() {
 function  cleanup() {
     if [[ -n "${TEMP_BACKUP_DIR:-}" && -d "$TEMP_BACKUP_DIR" ]]; then 
         rm -rf "$TEMP_BACKUP_DIR"
-    fi 
-    if [[ -n "${TMP_ZIP_DIR:-}" && -d "$TMP_ZIP_DIR" ]]; then 
-        rm -rf "$TMP_ZIP_DIR"
     fi 
 }
 
@@ -134,7 +128,10 @@ function backupTmpDirectory {
 
     # Zip all content to output file
     local curr_dir=$(pwd)
-    (cd "$TEMP_BACKUP_DIR" && zip -r "$curr_dir/$OUTPUT_FILE.zip" .) > /dev/null
+    (cd "$TEMP_BACKUP_DIR" && zip -r "$curr_dir/$OUTPUT_FILE.zip" . > /dev/null) || {
+        printIfVerbose "$VERBOSE_ARG_FLAG" "fatal" "Failed to create $OUTPUT_FILE zip"
+        writeLog "$LOGFILE_FLAG_ARG" "fatal" "Failed to create $OUTPUT_FILE" "$LOG_FILE"
+    }
     
     # Some info if verbose flag
     printIfVerbose "$VERBOSE_ARG_FLAG" "info" "Backup succefuly dumped to $OUTPUT_FILE.zip"
@@ -157,16 +154,10 @@ function pushFileToTempBackupDirectory {
     
     local TARGET_FILE=""
 
-    # copy dir in temp_file and save fpath (cross platform macos does not hav --parents flag)
+    # copy dir in temp_file and save fpath 
     cp --parents "$fpath" "$TEMP_BACKUP_DIR/" 2>/dev/null 
-    if [[ "$?" -eq 0 ]]; then 
-        TARGET_FILE="$TEMP_BACKUP_DIR/$fpath"
-    else
-        cp "$fpath" "$TEMP_BACKUP_DIR/"
-        TARGET_FILE="$TEMP_BACKUP_DIR/$(basename "$fpath")"
-    fi
-
-    # Extract metadata
+    TARGET_FILE="$TEMP_BACKUP_DIR/$fpath"
+    
     local METADATA_FILE="$(basename "$OUTPUT_FILE").METADATA_BAK_$(date +%Y-%m-%d).txt"
     local REALPATH_FPATH=$(realpath "$1")
    
@@ -177,7 +168,7 @@ function pushFileToTempBackupDirectory {
         printIfVerbose "$VERBOSE_ARG_FLAG" "info" "encrypting with aes backup file $TARGET_FILE"
         
         # Encrypt file from backupfile -> $TARGET_FILE.enc
-        openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$TARGET_FILE" -out "$TARGET_FILE.enc" -pass pass:"$ENC_PASS" || {
+        openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$TARGET_FILE" -out "$TARGET_FILE.enc" -pass env:BKP_PASS || {
             printIfVerbose "$VERBOSE_ARG_FLAG" "warning" "error while encrypting $TARGET_FILE"
             writeLog "$LOGFILE_FLAG_ARG" "warning" "failed to encrypt $TARGET_FILE" "$LOG_FILE"
             return 1 
@@ -269,8 +260,8 @@ function backupWithExstingBackupFile {
     # Unzip metadta file and log 
     unzip -p "$BACKUP_FILE" ".*METADATA_BAK*.txt" > "$TEMP_BACKUP_DIR/old_metadata.txt" || true
     
-    printIfVerbose "$VERBOSE_ARG_FLAG" "info" "$BACKUP_FILE unziped in $TMP_ZIP_DIR"
-    writeLog "$LOGFILE_FLAG_ARG" "info" "$BACKUP_FILE unziped in $TMP_ZIP_DIR" "$LOG_FILE"
+    printIfVerbose "$VERBOSE_ARG_FLAG" "info" "$BACKUP_FILE unziped in $TEMP_BACKUP_DIR"
+    writeLog "$LOGFILE_FLAG_ARG" "info" "$BACKUP_FILE unziped in $TEMP_BACKUP_DIR" "$LOG_FILE"
     
     # Branch for each case (config file or directory flag)
     if [[ "$DIR_ARG_FLAG" -eq  1 ]]; then
@@ -341,7 +332,7 @@ function restoreAndDecrypt {
         local TEMP_DEC_FILE="${ORIG_FILE}.tmp_dec"
         
         # Decrypt data and show some info 
-        openssl enc -d -aes-256-cbc -pbkdf2 -iter 100000 -in "$fpath" -out "$TEMP_DEC_FILE" -pass pass:"$DEC_PASS"
+        openssl enc -d -aes-256-cbc -pbkdf2 -iter 100000 -in "$fpath" -out "$TEMP_DEC_FILE" -pass env:BKP_PASS
 
         if [[ "$?" -eq 0 ]]; then 
             # Safe file with original name and remov temp name
@@ -416,16 +407,12 @@ while [[ "$#" -gt 0 ]]; do
             shift 2
             ;;
         -e | --encrypt)
-            checkNextMustArg "$1" "$2"
             ENC_ARG_FLAG=1
-            ENC_PASS="$2"
-            shift 2
+            shift 1
             ;;
         -dec | --decrypt) 
-            checkNextMustArg "$1" "$2"
             DEC_ARG_FLAG=1 
-            DEC_PASS="$2"
-            shift 2
+            shift 1
             ;;
         *)
             printHelpMenu
@@ -433,6 +420,15 @@ while [[ "$#" -gt 0 ]]; do
             ;;
     esac
 done
+
+# ceheck BKP_PASS var
+if [[ "$ENC_ARG_FLAG" -eq 1 || "$DEC_ARG_FLAG" -eq 1 ]]; then 
+    if [[ -z "${BKP_PASS:-}" ]]; then
+        printIfVerbose "$VERBOSE_ARG_FLAG" "fatal" "BKP_PASS env var not set" 
+        writeLog "$LOGFILE_FLAG_ARG" "fatal" "BKP_PASS env var not set" "$LOG_FILE"
+        exit 1
+    fi
+fi
 
 TEMP_BACKUP_DIR=$(mktemp -d -t backup_sys_XXXXXX)
 
@@ -445,13 +441,10 @@ checkAndPrintArguments
 
 if [[ "$BACKUP_FLAG_ARG" -eq 1 && ( "$FILE_ARG_FLAG" -eq 1 || "$DIR_ARG_FLAG" -eq 1 ) ]]; then 
     backupWithExstingBackupFile 
-    rm -rf "$TEMP_BACKUP_DIR"
 elif [[ "$DIR_ARG_FLAG" -eq 1 && "$FILE_ARG_FLAG" -eq 0 ]]; then
     backupFromDirectoryArr "${TARGET_DIRS[@]}"
-    rm -rf "$TEMP_BACKUP_DIR"
 elif [[ "$FILE_ARG_FLAG" -eq 1 && "$DIR_ARG_FLAG" -eq 0 ]]; then 
     backupFromConfigFile "$CONF_FILE"
-    rm -rf "$TEMP_BACKUP_DIR"
 else
     printErrorMsg "fatal" "Invalid args combination"
     exit 1
