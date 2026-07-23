@@ -1,4 +1,4 @@
-[[0;32mInfo[0m] [2026-07-21] backup started with directory flag
-[[0;32mInfo[0m] [2026-07-21] Process started for results/data/dir2/file2.txt
-[[0;32mInfo[0m] [2026-07-21] Metadata from /home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir2/file2.txt dumped in /tmp/backup_sys_UYcwH2/.enc_backup.METADATA_BAK_2026-07-21.txt
-[[0;32mInfo[0m] [2026-07-21] Backup succefuly dumped to results/backups/enc_backup.zip
+[[0;32mInfo[0m] [2026-07-23] backup started with directory flag
+[[0;32mInfo[0m] [2026-07-23] Process started for results/data/dir2/file2.txt
+[[0;32mInfo[0m] [2026-07-23] Metadata from /home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir2/file2.txt dumped in /tmp/backup_sys_VpvJIL/.enc_backup.METADATA_BAK_2026-07-23.txt
+[[0;32mInfo[0m] [2026-07-23] Backup succefuly dumped to results/backups/enc_backup.zip

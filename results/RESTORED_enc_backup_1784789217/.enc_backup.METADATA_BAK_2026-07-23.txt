@@ -1,0 +1,1 @@
+results/data/dir2/file2.txt|alexandru-mirel|644|# file: home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir2/file2.txt	# owner: alexandru-mirel	# group: alexandru-mirel	user::rw-	group::r--	other::r--	|2026-07-23 09:46:57|2026-07-23 09:46:57|2026-07-23 09:46:57|2173f38275b16a9ac7132bb5db2dd1d8895a2e08bb5af2d62690152215de0dc3

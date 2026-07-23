@@ -1,7 +1,7 @@
-[[0;32mInfo[0m] [2026-07-21] results/backups/base.zip unziped in /tmp/backup_sys_cvPqMg
-[[0;32mInfo[0m] [2026-07-21] Process started for results/data/dir1/new.txt
-[[0;32mInfo[0m] [2026-07-21] Metadata from /home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir1/new.txt dumped in /tmp/backup_sys_cvPqMg/.diff_backup.METADATA_BAK_2026-07-21.txt
-[[0;32mInfo[0m] [2026-07-21] Process started for results/data/dir1/file1.txt
-[[0;32mInfo[0m] [2026-07-21] Metadata from /home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir1/file1.txt dumped in /tmp/backup_sys_cvPqMg/.diff_backup.METADATA_BAK_2026-07-21.txt
-[[0;32mInfo[0m] [2026-07-21] Backup succefuly dumped to results/backups/diff_backup.zip
-[[0;32mInfo[0m] [2026-07-21] backup created from existing backup
+[[0;32mInfo[0m] [2026-07-23] results/backups/base.zip unziped in /tmp/backup_sys_7qhvW0
+[[0;32mInfo[0m] [2026-07-23] Process started for results/data/dir1/new.txt
+[[0;32mInfo[0m] [2026-07-23] Metadata from /home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir1/new.txt dumped in /tmp/backup_sys_7qhvW0/.diff_backup.METADATA_BAK_2026-07-23.txt
+[[0;32mInfo[0m] [2026-07-23] Process started for results/data/dir1/file1.txt
+[[0;32mInfo[0m] [2026-07-23] Metadata from /home/alexandru-mirel/Desktop/Proiect Practica/results/data/dir1/file1.txt dumped in /tmp/backup_sys_7qhvW0/.diff_backup.METADATA_BAK_2026-07-23.txt
+[[0;32mInfo[0m] [2026-07-23] Backup succefuly dumped to results/backups/diff_backup.zip
+[[0;32mInfo[0m] [2026-07-23] backup created from existing backup
